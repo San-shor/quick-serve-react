@@ -1,12 +1,14 @@
-import "./App.css";
-import CreateWorker from "./components/worker/createWorker";
+import { Outlet } from 'react-router';
+import './App.css';
+import SideBar from './components/ui/SideBar';
 
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 p-4">
-      <div className="w-full max-w-4xl mx-auto">
-        <CreateWorker />
-      </div>
+    <div className='flex h-screen bg-neutral-50'>
+      <SideBar />
+      <main className='flex-1 overflow-y-auto'>
+        <Outlet />
+      </main>
     </div>
   );
 }
