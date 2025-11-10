@@ -31,7 +31,6 @@ class ApiService {
     }
   }
 
-  // Worker-specific methods
   async createWorker(workerData) {
     return this.request(API_CONFIG.endpoints.workers.create, {
       method: "POST",
@@ -43,23 +42,6 @@ class ApiService {
     const workerList = this.request(API_CONFIG.endpoints.workers.getAll);
     console.log(workerList);
     return workerList;
-  }
-
-  async getWorkerById(id) {
-    return this.request(API_CONFIG.endpoints.workers.getById(id));
-  }
-
-  async updateWorker(id, workerData) {
-    return this.request(API_CONFIG.endpoints.workers.update(id), {
-      method: "PUT",
-      body: JSON.stringify(workerData),
-    });
-  }
-
-  async deleteWorker(id) {
-    return this.request(API_CONFIG.endpoints.workers.delete(id), {
-      method: "DELETE",
-    });
   }
 }
 
