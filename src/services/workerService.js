@@ -1,6 +1,6 @@
 import API_CONFIG from "../config/apiService";
 
-class ApiService {
+class WorkerService {
   constructor() {
     this.baseURL = API_CONFIG.baseURL;
   }
@@ -18,13 +18,13 @@ class ApiService {
     };
 
     try {
-      const response = await fetch(url, config);
+      const response = await (await fetch(url, config)).json();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (response.errors && Object.keys(response.errors).length > 0) {
+        throw new Error(` ${response.message}`);
       }
 
-      return await response.json();
+      return response;
     } catch (error) {
       console.error("API request failed:", error);
       throw error;
@@ -39,10 +39,10 @@ class ApiService {
   }
 
   async getAllWorkers() {
-    const workerList = this.request(API_CONFIG.endpoints.workers.getAll);
-    console.log(workerList);
-    return workerList;
+    return this.request(API_CONFIG.endpoints.workers.getAll, {
+      method: "GET",
+    });
   }
 }
 
-export default new ApiService();
+export default new WorkerService();

@@ -1,22 +1,21 @@
 import { useActionState, useState } from "react";
-import ApiService from "../../services/workerService";
+import WorkerService from "../../services/workerService";
 import { workerValidationSchema } from "../../validations/workerValidation";
 import Card from "../ui/Card";
 
 const submitWorkerData = async (prevState, formData) => {
-  console.log(formData);
   try {
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const values = Object.fromEntries(formData);
 
     const serviceTypeArray = formData.getAll("serviceType");
-    //
 
     await workerValidationSchema.validate(
       { ...values, serviceType: serviceTypeArray },
       { abortEarly: false }
     );
+
     const workerData = {
       name: values.name,
       email: values.email,
@@ -30,8 +29,9 @@ const submitWorkerData = async (prevState, formData) => {
       is_active: true,
       address: values.address || "",
     };
-    const response = await ApiService.createWorker(workerData);
-    console.log("✅ API Response:", response);
+
+    const response = await WorkerService.createWorker(workerData);
+
     return {
       success: true,
       message: "Worker registered successfully!",
@@ -53,12 +53,14 @@ const submitWorkerData = async (prevState, formData) => {
       };
     }
 
-    return {
-      success: false,
-      message: "An unexpected error occurred",
-      errors: {},
-      data: null,
-    };
+    if (error.message) {
+      return {
+        success: false,
+        message: error.message,
+        errors: {},
+        data: null,
+      };
+    }
   }
 };
 
