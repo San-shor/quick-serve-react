@@ -1,4 +1,5 @@
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { uploadImageToCloudinary } from '../../utils/cloudinaryUpload';
 import submitWorkerData from '../../utils/workerAction';
 import Card from '../ui/Card';
@@ -13,8 +14,15 @@ export default function CreateWorker() {
     errors: {},
     data: null,
   });
-
-  console.log({ stateErrors: state.errors });
+  useEffect(() => {
+    if (state.message) {
+      if (state.success) {
+        toast.success(state.message);
+      } else {
+        toast.error(state.message);
+      }
+    }
+  }, [state.success, state.message]);
 
   const handleImageChange = async (event) => {
     const file = event.currentTarget.files[0];
@@ -27,14 +35,14 @@ export default function CreateWorker() {
         'image/webp',
       ];
       if (!validateTypes.includes(file.type)) {
-        alert('Please select a valid image file (JPEG, PNG, GIF, WEBP)');
+        toast.error('Please select a valid image file (JPEG, PNG, GIF, WEBP)');
         event.target.value = '';
         setPreview(null);
         setImageUrl(null);
         return;
       }
       if (file.size > 2 * 1024 * 1024) {
-        alert('Image size should be less than 2MB');
+        toast.error('Image size should be less than 2MB');
         event.target.value = '';
         setPreview(null);
         setImageUrl(null);
@@ -54,7 +62,7 @@ export default function CreateWorker() {
         const url = await uploadImageToCloudinary(file);
         setImageUrl(url);
       } catch (error) {
-        alert(`Failed to upload image: ${error.message}`);
+        toast.error(`Failed to upload image: ${error.message}`);
         event.target.value = '';
         setPreview(null);
         setImageUrl(null);
@@ -80,18 +88,6 @@ export default function CreateWorker() {
         borderColor='border-blue-100'
         formCard={true}>
         <form action={formAction}>
-          {state.success && (
-            <div className='mb-6 p-4 bg-green-50 border border-green-200 rounded-lg'>
-              <p className='text-green-800 font-medium'>{state.message}</p>
-            </div>
-          )}
-
-          {!state.success && state.message && (
-            <div className='mb-6 p-4 bg-red-50 border border-red-200 rounded-lg'>
-              <p className='text-red-800 font-medium'>{state.message}</p>
-            </div>
-          )}
-
           <div className='mb-8'>
             <h3 className='text-lg font-semibold text-slate-800 mb-6 pb-2 border-b border-blue-100'>
               Personal Information
