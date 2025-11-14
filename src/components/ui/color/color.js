@@ -2,6 +2,7 @@ export const colors = {
   primary: {
     50: '#F8FAFC',
     100: '#F1F5F9',
+    200: '#E2E8F0',
     700: '#334155',
     800: '#1E293B',
     900: '#0F172A',
@@ -9,6 +10,7 @@ export const colors = {
 
   accent: {
     50: '#EFF6FF',
+    200: '#BFDBFE',
     500: '#3B82F6',
     600: '#2563EB',
   },
@@ -25,11 +27,13 @@ export const colors = {
 
   success: {
     50: '#ECFDF5',
+    200: '#A7F3D0',
     500: '#10B981',
   },
 
   warning: {
     50: '#FFFBEB',
+    200: '#FEF3C7',
     500: '#F59E0B',
   },
 

@@ -31,16 +31,15 @@ class WorkerService {
     }
   }
 
-  async createWorker(formData) {
-    // When sending FormData, don't stringify it and don't set Content-Type
-    // The browser will automatically set the correct Content-Type with boundary
+  async createWorker(workerData) {
+    // Send JSON data instead of FormData
     const url = `${this.baseURL}${API_CONFIG.endpoints.workers.create}`;
 
     const config = {
       method: 'POST',
-      body: formData,
-      // Don't set Content-Type header - browser will set it automatically with boundary
+      body: JSON.stringify(workerData),
       headers: {
+        'Content-Type': 'application/json',
         Accept: 'application/json',
       },
     };
