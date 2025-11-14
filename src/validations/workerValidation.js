@@ -22,11 +22,11 @@ export const workerValidationSchema = Yup.object({
     .matches(/^\d{10,17}$/, "NID must be 10–17 digits")
     .required("NID is required"),
 
-  serviceType: Yup.array()
+  service_type: Yup.array()
     .min(1, "Select at least one service type")
     .required("Select at least one service type"),
 
-  expertise: Yup.number()
+  expertise_of_service: Yup.number()
     .required("Enter expertise level")
     .min(1, "Minimum value is 1")
     .max(10, "Maximum value is 10"),

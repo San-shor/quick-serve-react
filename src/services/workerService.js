@@ -1,4 +1,4 @@
-import API_CONFIG from "../config/apiService";
+import API_CONFIG from '../config/apiService';
 
 class WorkerService {
   constructor() {
@@ -10,8 +10,8 @@ class WorkerService {
 
     const config = {
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
         ...options.headers,
       },
       ...options,
@@ -26,21 +26,43 @@ class WorkerService {
 
       return response;
     } catch (error) {
-      console.error("API request failed:", error);
+      console.error('API request failed:', error);
       throw error;
     }
   }
 
-  async createWorker(workerData) {
-    return this.request(API_CONFIG.endpoints.workers.create, {
-      method: "POST",
-      body: JSON.stringify(workerData),
-    });
+  async createWorker(formData) {
+    // When sending FormData, don't stringify it and don't set Content-Type
+    // The browser will automatically set the correct Content-Type with boundary
+    const url = `${this.baseURL}${API_CONFIG.endpoints.workers.create}`;
+
+    const config = {
+      method: 'POST',
+      body: formData,
+      // Don't set Content-Type header - browser will set it automatically with boundary
+      headers: {
+        Accept: 'application/json',
+      },
+    };
+
+    try {
+      const response = await fetch(url, config);
+      const data = await response.json();
+
+      if (data.errors && Object.keys(data.errors).length > 0) {
+        throw new Error(` ${data.message}`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('API request failed:', error);
+      throw error;
+    }
   }
 
   async getAllWorkers() {
     return this.request(API_CONFIG.endpoints.workers.getAll, {
-      method: "GET",
+      method: 'GET',
     });
   }
 }

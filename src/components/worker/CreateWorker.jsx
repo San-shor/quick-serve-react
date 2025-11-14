@@ -1,68 +1,6 @@
 import { useActionState, useState } from "react";
-import WorkerService from "../../services/workerService";
-import { workerValidationSchema } from "../../validations/workerValidation";
 import Card from "../ui/Card";
-
-const submitWorkerData = async (prevState, formData) => {
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    const values = Object.fromEntries(formData);
-
-    const serviceTypeArray = formData.getAll("serviceType");
-
-    await workerValidationSchema.validate(
-      { ...values, serviceType: serviceTypeArray },
-      { abortEarly: false }
-    );
-
-    const workerData = {
-      name: values.name,
-      email: values.email,
-      phone: values.phone,
-      age: parseInt(values.age),
-      nid: values.nid,
-      service_type: serviceTypeArray,
-      expertise_of_service: values.expertise,
-      shift: values.shift,
-      rating: parseFloat(values.rating),
-      is_active: true,
-      address: values.address || "",
-    };
-
-    const response = await WorkerService.createWorker(workerData);
-
-    return {
-      success: true,
-      message: "Worker registered successfully!",
-      data: response.data || response,
-      errors: {},
-    };
-  } catch (error) {
-    if (error.name === "ValidationError") {
-      const errors = {};
-      error.inner.forEach((err) => {
-        errors[err.path] = err.message;
-      });
-
-      return {
-        success: false,
-        message: "Please submit form with all fields",
-        errors: errors,
-        data: null,
-      };
-    }
-
-    if (error.message) {
-      return {
-        success: false,
-        message: error.message,
-        errors: {},
-        data: null,
-      };
-    }
-  }
-};
+import submitWorkerData from "../utils/workerAction";
 
 export default function CreateWorker() {
   const [preview, setPreview] = useState(null);
@@ -73,14 +11,37 @@ export default function CreateWorker() {
     data: null,
   });
 
+  console.log({ stateErrors: state.errors });
+
   const handleImageChange = (event) => {
     const file = event.currentTarget.files[0];
     if (file) {
+      const validateTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+        "image/gif",
+        "image/webp",
+      ];
+      if (!validateTypes.includes(file.type)) {
+        alert("Please select a valid image file (JPEG, PNG, GIF, WEBP)");
+        event.target.value = "";
+        setPreview(null);
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Image size should be less than 2MB");
+        event.target.value = "";
+        setPreview(null);
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
       };
       reader.readAsDataURL(file);
+    } else {
+      setPreview(null);
     }
   };
 
@@ -97,7 +58,7 @@ export default function CreateWorker() {
         borderColor="border-blue-100"
         formCard={true}
       >
-        <form action={formAction}>
+        <form action={formAction} encType="multipart/form-data">
           {state.success && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
               <p className="text-green-800 font-medium">{state.message}</p>
@@ -246,7 +207,7 @@ export default function CreateWorker() {
                     >
                       <input
                         type="checkbox"
-                        name="serviceType"
+                        name="service_type[]"
                         value={type}
                         className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                       />
@@ -257,9 +218,9 @@ export default function CreateWorker() {
                   )
                 )}
               </div>
-              {state.errors?.serviceType && (
+              {state.errors?.service_type && (
                 <p className="text-sm mt-2 text-red-500">
-                  {state.errors.serviceType}
+                  {state.errors.service_type}
                 </p>
               )}
             </div>
@@ -271,15 +232,15 @@ export default function CreateWorker() {
                 </label>
                 <input
                   type="number"
-                  name="expertise"
+                  name="expertise_of_service"
                   placeholder="Enter 1-10"
                   min="1"
                   max="10"
                   className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
                 />
-                {state.errors?.expertise && (
+                {state.errors?.expertise_of_service && (
                   <p className="text-sm mt-1 text-red-500">
-                    {state.errors.expertise}
+                    {state.errors.expertise_of_service}
                   </p>
                 )}
               </div>
