@@ -18,10 +18,6 @@ export const workerValidationSchema = Yup.object({
     .positive("Age must be positive")
     .integer("Age must be an integer"),
 
-  nid: Yup.string()
-    .matches(/^\d{10,17}$/, "NID must be 10–17 digits")
-    .required("NID is required"),
-
   service_type: Yup.array()
     .min(1, "Select at least one service type")
     .required("Select at least one service type"),
