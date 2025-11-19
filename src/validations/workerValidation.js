@@ -10,7 +10,7 @@ export const workerValidationSchema = Yup.object({
     .required("Email is required"),
 
   phone: Yup.string()
-    .matches(/^\d{10,15}$/, "Phone number must be 10-15 digits")
+    .matches(/^\d{10,15}$/, "Phone number must be 11 digits")
     .required("Phone number is required"),
 
   age: Yup.number()

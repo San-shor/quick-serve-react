@@ -8,9 +8,12 @@ const API_CONFIG = {
       update: (id) => `/workers/${id}`,
       delete: (id) => `/workers/${id}`,
     },
-    // Add other endpoints as needed
+    auth: {
+      signUp: "/signup",
+      login: "/login",
+    },
   },
-  timeout: 10000, // 10 seconds
+  timeout: 10000,
 };
 
 export default API_CONFIG;
