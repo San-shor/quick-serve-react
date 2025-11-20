@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from "react-router";
 import Login from "../components/auth/Login";
 import Register from "../components/auth/Register";
 import CustomerDashboard from "../components/CustomerDashBoard";
+import DashBoard from "../components/DashBoard";
 import CustomerLayout from "../components/layout/CustomerLayout";
 import DashboardLayout from "../components/layout/DashBoardLayout";
 import WorkerLayout from "../components/layout/WorkerLayout";
@@ -37,7 +38,7 @@ const routes = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: "dashboard", Component: DashboardLayout },
+      { path: "dashboard", Component: DashBoard },
       { path: "create-worker", Component: CreateWorker },
       { path: "manage-workers", Component: WorkerList },
     ],
@@ -75,10 +76,10 @@ const routes = createBrowserRouter([
     ],
   },
 
-  {
-    path: "*",
-    element: <Navigate to="/signup" replace />,
-  },
+  // {
+  //   path: "*",
+  //   element: <Navigate to="/signup" replace />,
+  // },
 ]);
 
 export default routes;

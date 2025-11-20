@@ -13,8 +13,6 @@ const Register = () => {
   const navigate = useNavigate();
 
   const roleOptions = [
-    { value: "Admin", label: "Admin" },
-    { value: "Moderator", label: "Moderator" },
     { value: "Worker", label: "Worker" },
     { value: "Customer", label: "Customer" },
   ];
@@ -46,19 +44,12 @@ const Register = () => {
         login(result.data.token, result.data.user);
 
         const role = result.data.user.role.toLowerCase();
-        switch (role) {
-          case "admin":
-          case "moderator":
-            navigate("/dashboard");
-            break;
-          case "worker":
-            navigate("/worker/dashboard");
-            break;
-          case "customer":
-            navigate("/customer/dashboard");
-            break;
-          default:
-            navigate("/login");
+        if (role === "worker") {
+          navigate("/worker/dashboard");
+        } else if (role === "customer") {
+          navigate("/customer/dashboard");
+        } else {
+          navigate("/login");
         }
       }
 
