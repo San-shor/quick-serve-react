@@ -1,6 +1,6 @@
 import { use } from "react";
 import { Navigate } from "react-router";
-import { AuthContext } from "../context/AuthProvider";
+import { AuthContext } from "../context/AuthContext";
 
 const RoleBasedRoute = ({ children, allowedRoles }) => {
   const getRoleDefaultPath = (role) => {
@@ -16,8 +16,14 @@ const RoleBasedRoute = ({ children, allowedRoles }) => {
         return "/login";
     }
   };
-  const { isAuthenticated, user } = use(AuthContext);
-
+  const { isAuthenticated, user, loading } = use(AuthContext);
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

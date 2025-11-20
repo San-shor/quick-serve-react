@@ -4,7 +4,7 @@ import {
   signUpValidationSchema,
 } from "../validations/authValidation";
 
-export const signUpAction = async (prevState, formData) => {
+export const signUpAction = async (prevState, formData, loginFunction) => {
   try {
     const values = Object.fromEntries(formData);
 
@@ -20,6 +20,9 @@ export const signUpAction = async (prevState, formData) => {
     };
 
     const response = await authService.signUp(userData);
+    if (loginFunction && response.token && response.user) {
+      loginFunction(response.token, response.user);
+    }
 
     return {
       success: true,
@@ -60,14 +63,10 @@ export const signUpAction = async (prevState, formData) => {
 };
 
 // Login Action
-export const loginAction = async (prevState, formData) => {
+export const loginAction = async (prevState, formData, loginFunction) => {
   try {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
     const values = Object.fromEntries(formData);
 
-    // Validate form data
     await loginValidationSchema.validate(values, { abortEarly: false });
 
     const credentials = {
@@ -76,10 +75,8 @@ export const loginAction = async (prevState, formData) => {
     };
 
     const response = await authService.login(credentials);
-
-    // Store authentication data
-    if (response.token) {
-      authService.storeAuthData(response.token, response.user);
+    if (loginFunction && response.token && response.user) {
+      loginFunction(response.token, response.user);
     }
 
     return {

@@ -1,5 +1,6 @@
 // routes.jsx
 import { createBrowserRouter, Navigate } from "react-router";
+import Login from "../components/auth/Login";
 import Register from "../components/auth/Register";
 import CustomerDashboard from "../components/CustomerDashBoard";
 import CustomerLayout from "../components/layout/CustomerLayout";
@@ -13,10 +14,10 @@ import RoleBasedRoute from "./RoleBasedRoute";
 
 const routes = createBrowserRouter([
   // Public routes
-  // {
-  //   path: "/login",
-  //   Component: Login,
-  // },
+  {
+    path: "/login",
+    Component: Login,
+  },
   {
     path: "/signup",
     Component: Register,

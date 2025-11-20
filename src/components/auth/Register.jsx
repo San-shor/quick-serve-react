@@ -1,6 +1,7 @@
-import { useActionState } from "react";
-import { Link } from "react-router";
+import { use, useActionState, useEffect } from "react";
+import { Link, useNavigate } from "react-router";
 import logo from "../../assets/logo.png";
+import { AuthContext } from "../../context/AuthContext";
 import { signUpAction } from "../../utils/authAction";
 import Card from "../ui/Card";
 import { colors } from "../ui/color/color";
@@ -8,18 +9,68 @@ import { FormInput } from "../ui/FormInput";
 import { FormSelect } from "../ui/FormSelect";
 
 const Register = () => {
-  const [state, formAction, isPending] = useActionState(signUpAction, {
-    success: false,
-    message: "",
-    data: null,
-    errors: {},
-  });
+  const { login, isAuthenticated, user } = use(AuthContext);
+  const navigate = useNavigate();
+
   const roleOptions = [
     { value: "Admin", label: "Admin" },
     { value: "Moderator", label: "Moderator" },
     { value: "Worker", label: "Worker" },
     { value: "Customer", label: "Customer" },
   ];
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const role = user.role.toLowerCase();
+      switch (role) {
+        case "admin":
+        case "moderator":
+          navigate("/dashboard", { replace: true });
+          break;
+        case "worker":
+          navigate("/worker/dashboard", { replace: true });
+          break;
+        case "customer":
+          navigate("/customer/dashboard", { replace: true });
+          break;
+        default:
+          break;
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
+
+  const [state, formAction, isPending] = useActionState(
+    async (prevState, formData) => {
+      const result = await signUpAction(prevState, formData);
+
+      if (result.success && result.data?.token) {
+        login(result.data.token, result.data.user);
+
+        const role = result.data.user.role.toLowerCase();
+        switch (role) {
+          case "admin":
+          case "moderator":
+            navigate("/dashboard");
+            break;
+          case "worker":
+            navigate("/worker/dashboard");
+            break;
+          case "customer":
+            navigate("/customer/dashboard");
+            break;
+          default:
+            navigate("/login");
+        }
+      }
+
+      return result;
+    },
+    {
+      success: false,
+      message: "",
+      data: null,
+      errors: {},
+    }
+  );
 
   return (
     <div className="h-screen flex flex-col lg:flex-row items-center justify-center p-4 lg:p-6">
@@ -43,10 +94,10 @@ const Register = () => {
           Already have an account?{" "}
           <Link
             to="/login"
-            className="font-semibold hover:underline"
+            className="font-bold hover:underline"
             style={{ color: colors.accent[600] }}
           >
-            Sign in
+            Login
           </Link>
         </p>
       </div>
