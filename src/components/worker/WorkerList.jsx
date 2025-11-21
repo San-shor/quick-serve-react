@@ -1,9 +1,9 @@
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import WorkerService from "../../services/workerService";
 import WorkerTable from "./WorkerTable";
 
 const WorkerList = () => {
-  const [workersPromise] = useState(() => WorkerService.getAllWorkers());
+  const workersPromise = WorkerService.getAllWorkers();
 
   return (
     <div className="p-6">

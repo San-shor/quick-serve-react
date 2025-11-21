@@ -211,6 +211,7 @@ export default function CreateWorker() {
               <label className="block text-sm mb-3 text-gray-600 font-semibold">
                 Service Type *
               </label>
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {["Cleaning", "Plumbing", "Electrician", "Cooking"].map(
                   (type) => (

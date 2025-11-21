@@ -1,7 +1,7 @@
 import workerService from "../services/workerService";
 import { workerValidationSchema } from "../validations/workerValidation";
 
-const submitWorkerData = async (prevState, formData) => {
+export const submitWorkerData = async (prevState, formData) => {
   try {
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -66,4 +66,33 @@ const submitWorkerData = async (prevState, formData) => {
   }
 };
 
-export default submitWorkerData;
+export default async function createServiceAction(prevState, formData) {
+  try {
+    const name = formData.get("name")?.trim();
+
+    if (!name) {
+      return {
+        success: false,
+        message: "Service name is required",
+        errors: { name: "Service name is required" },
+        data: null,
+      };
+    }
+
+    const response = await workerService.createService({ name });
+
+    return {
+      success: true,
+      message: "Service created successfully!",
+      errors: {},
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message || "Failed to create service",
+      errors: {},
+      data: null,
+    };
+  }
+}

@@ -63,6 +63,18 @@ class WorkerService {
       method: "GET",
     });
   }
+
+  async getServices() {
+    return this.request(API_CONFIG.endpoints.services.getServices, {
+      method: "GET",
+    });
+  }
+  async createService(serviceData) {
+    return this.request(API_CONFIG.endpoints.services.createService, {
+      method: "POST",
+      body: JSON.stringify(serviceData),
+    });
+  }
 }
 
 export default new WorkerService();

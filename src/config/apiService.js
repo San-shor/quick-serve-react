@@ -12,6 +12,10 @@ const API_CONFIG = {
       signUp: "/signup",
       login: "/login",
     },
+    services: {
+      getServices: "/getServices",
+      createService: "/service",
+    },
   },
   timeout: 10000,
 };
