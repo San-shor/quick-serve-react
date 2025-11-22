@@ -4,6 +4,7 @@ import workerService from "../../services/workerService";
 import { uploadImageToCloudinary } from "../../utils/cloudinaryUpload";
 import { submitWorkerData } from "../../utils/workerAction";
 import Card from "../ui/Card";
+import Rating from "../ui/Rating";
 export default function CreateWorker() {
   const [preview, setPreview] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -15,6 +16,8 @@ export default function CreateWorker() {
     data: null,
   });
   const [services, setServices] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const [serviceRatings, setServiceRatings] = useState({});
   const fetchServices = async () => {
     try {
       const res = await workerService.getServices();
@@ -87,6 +90,21 @@ export default function CreateWorker() {
       setPreview(null);
       setImageUrl(null);
     }
+  };
+  const handleServiceChange = (serviceName, isChecked) => {
+    if (isChecked) {
+      setSelectedServices([...selectedServices, serviceName]);
+      setServiceRatings({ ...serviceRatings, [serviceName]: 0 });
+    } else {
+      setSelectedServices(selectedServices.filter((s) => s !== serviceName));
+      const newRatings = { ...serviceRatings };
+      delete newRatings[serviceName];
+      setServiceRatings(newRatings);
+    }
+  };
+
+  const handleRatingChange = (serviceName, rating) => {
+    setServiceRatings({ ...serviceRatings, [serviceName]: rating });
   };
 
   return (
@@ -237,6 +255,9 @@ export default function CreateWorker() {
                       name="service_type[]"
                       value={service.name}
                       className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                      onChange={(e) =>
+                        handleServiceChange(service.name, e.target.checked)
+                      }
                     />
                     <span className="text-sm font-medium text-gray-700">
                       {service.name}
@@ -250,27 +271,39 @@ export default function CreateWorker() {
                 </p>
               )}
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="block text-sm mb-2 text-gray-600 font-semibold">
-                  Expertise Level (1-10) *
+            {selectedServices.length > 0 && (
+              <div className="mb-6">
+                <label className="block text-sm mb-3 text-gray-600 font-semibold">
+                  Rate Your Expertise Per Service *
                 </label>
-                <input
-                  type="number"
-                  name="expertise_of_service"
-                  placeholder="Enter 1-10"
-                  min="1"
-                  max="10"
-                  className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
-                />
-                {state.errors?.expertise_of_service && (
-                  <p className="text-sm mt-1 text-red-500">
-                    {state.errors.expertise_of_service}
+                <div className="space-y-4">
+                  {selectedServices.map((serviceName) => (
+                    <div
+                      key={serviceName}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                    >
+                      <span className="text-sm font-medium text-gray-700">
+                        {serviceName}
+                      </span>
+                      <Rating
+                        value={serviceRatings[serviceName] || 0}
+                        onChange={(rating) =>
+                          handleRatingChange(serviceName, rating)
+                        }
+                        name={`service_rating_${serviceName}`}
+                        max={5}
+                      />
+                    </div>
+                  ))}
+                </div>
+                {state.errors?.service_ratings && (
+                  <p className="text-sm mt-2 text-red-500">
+                    {state.errors.service_ratings}
                   </p>
                 )}
               </div>
-
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm mb-2 text-gray-600 font-semibold">
                   Preferred Shift *

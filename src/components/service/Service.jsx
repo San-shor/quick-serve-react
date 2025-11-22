@@ -1,7 +1,7 @@
 import { CirclePlus } from "lucide-react";
 import { Suspense, useActionState, useEffect, useState } from "react";
 import workerService from "../../services/workerService";
-import createServiceAction from "../../utils/workerAction";
+import { createServiceAction } from "../../utils/workerAction";
 import { FormInput } from "../ui/FormInput";
 import ServiceList from "./ServiceList";
 

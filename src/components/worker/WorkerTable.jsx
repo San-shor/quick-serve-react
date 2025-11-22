@@ -82,17 +82,39 @@ const WorkerTable = ({ workerPromise }) => {
       header: "Service Type",
       accessor: (item) => {
         let serviceTypes = item.service_type;
+        let serviceRatings = item.service_ratings;
 
         if (typeof serviceTypes === "string") {
           try {
             serviceTypes = JSON.parse(serviceTypes);
           } catch (error) {
-            error;
+            console.error("Error parsing service_type:", error);
             serviceTypes = [serviceTypes];
           }
         }
 
-        if (Array.isArray(serviceTypes)) {
+        if (typeof serviceRatings === "string") {
+          try {
+            serviceRatings = JSON.parse(serviceRatings);
+          } catch (error) {
+            console.error("Error parsing service_ratings:", error);
+            serviceRatings = {};
+          }
+        }
+
+        if (!serviceRatings || Object.keys(serviceRatings).length === 0) {
+          if (Array.isArray(serviceTypes)) {
+            return (
+              <span
+                className="text-xs"
+                style={{
+                  color: colors.neutral[600],
+                }}
+              >
+                {serviceTypes.join(", ")}
+              </span>
+            );
+          }
           return (
             <span
               className="text-xs"
@@ -100,12 +122,29 @@ const WorkerTable = ({ workerPromise }) => {
                 color: colors.neutral[600],
               }}
             >
-              {serviceTypes.join(", ")}
+              {serviceTypes || "Not specified"}
             </span>
           );
         }
 
-        // Fallback for single service or invalid data
+        if (Array.isArray(serviceTypes)) {
+          const formattedServices = serviceTypes.map((service) => {
+            const rating = serviceRatings[service];
+            return rating ? `${service}(${rating})` : service;
+          });
+
+          return (
+            <span
+              className="text-xs"
+              style={{
+                color: colors.neutral[600],
+              }}
+            >
+              {formattedServices.join(", ")}
+            </span>
+          );
+        }
+
         return (
           <span
             className="text-xs"
@@ -118,9 +157,9 @@ const WorkerTable = ({ workerPromise }) => {
         );
       },
     },
-    { header: "Expertise", accessor: "expertise_of_service" },
+
     {
-      header: "Rating",
+      header: "Overall Rating",
       accessor: (item) => `${item.rating}/5`,
     },
     {

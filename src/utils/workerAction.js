@@ -8,6 +8,14 @@ export const submitWorkerData = async (prevState, formData) => {
     const values = Object.fromEntries(formData);
 
     const imageUrl = values.imageUrl || "";
+    const serviceRatings = {};
+    serviceTypeArray.forEach((serviceName) => {
+      const ratingKey = `service_rating_${serviceName}`;
+      const rating = formData.get(ratingKey);
+      if (rating) {
+        serviceRatings[serviceName] = parseInt(rating);
+      }
+    });
 
     await workerValidationSchema.validate(
       { ...values, service_type: serviceTypeArray },
@@ -20,12 +28,9 @@ export const submitWorkerData = async (prevState, formData) => {
       phone: values.phone,
       age: values.age ? parseInt(values.age) : null,
 
-      expertise_of_service: values.expertise_of_service
-        ? parseInt(values.expertise_of_service)
-        : null,
       shift: values.shift,
       rating: values.rating ? parseInt(values.rating) : null,
-
+      service_ratings: serviceRatings,
       service_type: serviceTypeArray,
       image: imageUrl || null,
     };

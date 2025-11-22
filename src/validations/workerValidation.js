@@ -22,11 +22,6 @@ export const workerValidationSchema = Yup.object({
     .min(1, "Select at least one service type")
     .required("Select at least one service type"),
 
-  expertise_of_service: Yup.number()
-    .required("Enter expertise level")
-    .min(1, "Minimum value is 1")
-    .max(10, "Maximum value is 10"),
-
   shift: Yup.string().required("Select shift"),
 
   rating: Yup.number()
