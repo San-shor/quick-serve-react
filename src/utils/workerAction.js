@@ -3,8 +3,6 @@ import { workerValidationSchema } from "../validations/workerValidation";
 
 export const submitWorkerData = async (prevState, formData) => {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
     const serviceTypeArray = formData.getAll("service_type[]");
 
     const values = Object.fromEntries(formData);
@@ -66,7 +64,7 @@ export const submitWorkerData = async (prevState, formData) => {
   }
 };
 
-export default async function createServiceAction(prevState, formData) {
+export async function createServiceAction(prevState, formData) {
   try {
     const name = formData.get("name")?.trim();
 

@@ -1,9 +1,9 @@
 import { useActionState, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import workerService from "../../services/workerService";
 import { uploadImageToCloudinary } from "../../utils/cloudinaryUpload";
-import submitWorkerData from "../../utils/workerAction";
+import { submitWorkerData } from "../../utils/workerAction";
 import Card from "../ui/Card";
-
 export default function CreateWorker() {
   const [preview, setPreview] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -14,6 +14,20 @@ export default function CreateWorker() {
     errors: {},
     data: null,
   });
+  const [services, setServices] = useState([]);
+  const fetchServices = async () => {
+    try {
+      const res = await workerService.getServices();
+      setServices(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  console.log(services);
   useEffect(() => {
     if (state.message) {
       if (state.success) {
@@ -213,24 +227,22 @@ export default function CreateWorker() {
               </label>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {["Cleaning", "Plumbing", "Electrician", "Cooking"].map(
-                  (type) => (
-                    <label
-                      key={type}
-                      className="flex items-center space-x-2 p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors cursor-pointer bg-white"
-                    >
-                      <input
-                        type="checkbox"
-                        name="service_type[]"
-                        value={type}
-                        className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                      />
-                      <span className="text-sm font-medium text-gray-700">
-                        {type}
-                      </span>
-                    </label>
-                  )
-                )}
+                {services.map((service) => (
+                  <label
+                    key={service.name}
+                    className="flex items-center space-x-2 p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors cursor-pointer bg-white"
+                  >
+                    <input
+                      type="checkbox"
+                      name="service_type[]"
+                      value={service.name}
+                      className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">
+                      {service.name}
+                    </span>
+                  </label>
+                ))}
               </div>
               {state.errors?.service_type && (
                 <p className="text-sm mt-2 text-red-500">
