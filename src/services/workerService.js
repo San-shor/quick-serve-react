@@ -75,6 +75,24 @@ class WorkerService {
       body: JSON.stringify(serviceData),
     });
   }
+  async updateService(id, serviceData) {
+    return this.request(
+      `${API_CONFIG.endpoints.services.updateService}/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(serviceData),
+      }
+    );
+  }
+
+  async deleteService(id) {
+    return this.request(
+      `${API_CONFIG.endpoints.services.deleteService}/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+  }
 }
 
 export default new WorkerService();

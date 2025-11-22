@@ -4,9 +4,6 @@ const API_CONFIG = {
     workers: {
       create: "/workers",
       getAll: "/getWorkers",
-      getById: (id) => `/workers/${id}`,
-      update: (id) => `/workers/${id}`,
-      delete: (id) => `/workers/${id}`,
     },
     auth: {
       signUp: "/signup",
@@ -15,6 +12,8 @@ const API_CONFIG = {
     services: {
       getServices: "/getServices",
       createService: "/service",
+      updateService: "/services/{id}",
+      deleteService: "/services",
     },
   },
   timeout: 10000,
