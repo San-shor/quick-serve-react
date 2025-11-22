@@ -96,3 +96,44 @@ export default async function createServiceAction(prevState, formData) {
     };
   }
 }
+
+export async function updateServiceAction(prevState, formData) {
+  try {
+    const id = formData.get("id");
+    const name = formData.get("name")?.trim();
+
+    if (!name) {
+      return {
+        success: false,
+        message: "Service name is required",
+        errors: { name: "Service name is required" },
+        data: null,
+      };
+    }
+
+    if (!id) {
+      return {
+        success: false,
+        message: "Service ID is required",
+        errors: { id: "Service ID is required" },
+        data: null,
+      };
+    }
+
+    const response = await workerService.updateService(id, { name });
+
+    return {
+      success: true,
+      message: "Service updated successfully!",
+      errors: {},
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message || "Failed to update service",
+      errors: {},
+      data: null,
+    };
+  }
+}

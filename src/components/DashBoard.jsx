@@ -11,10 +11,10 @@ import Card from "./ui/Card";
 
 function DashBoard() {
   return (
-    <div className="p-4 bg-neutral-50 min-h-screen">
+    <div className="p-4 md:p-6 bg-neutral-50 min-h-screen">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-900 mb-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1">
             Dashboard Overview
           </h1>
           <p className="text-neutral-600 text-sm">
@@ -22,7 +22,7 @@ function DashBoard() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 mb-6">
           <Card
             title="Total Workers"
             value="456"
@@ -113,9 +113,8 @@ function DashBoard() {
             </div>
           </Card>
         </div>
-        <div>
-          <Service />
-        </div>
+
+        <Service />
       </div>
     </div>
   );
