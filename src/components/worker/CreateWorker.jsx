@@ -9,6 +9,16 @@ export default function CreateWorker() {
   const [preview, setPreview] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    age: "",
+    phone: "",
+    shift: "",
+    rating: "",
+  });
+
   const [state, formAction, isPending] = useActionState(submitWorkerData, {
     success: false,
     message: "",
@@ -30,6 +40,35 @@ export default function CreateWorker() {
     fetchServices();
   }, []);
 
+  useEffect(() => {
+    if (state.success) {
+      // Reset form on successful submission
+      setFormData({
+        name: "",
+        email: "",
+        age: "",
+        phone: "",
+        shift: "",
+        rating: "",
+      });
+      setSelectedServices([]);
+      setServiceRatings({});
+      setPreview(null);
+      setImageUrl(null);
+      // Clear file input
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) fileInput.value = "";
+    }
+
+    if (state.message) {
+      if (state.success) {
+        toast.success(state.message);
+      } else {
+        toast.error(state.message);
+      }
+    }
+  }, [state]);
+
   console.log(services);
   useEffect(() => {
     if (state.message) {
@@ -40,6 +79,14 @@ export default function CreateWorker() {
       }
     }
   }, [state]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleImageChange = async (event) => {
     const file = event.currentTarget.files[0];
@@ -107,6 +154,29 @@ export default function CreateWorker() {
     setServiceRatings({ ...serviceRatings, [serviceName]: rating });
   };
 
+  const renderHiddenInputs = () => {
+    return (
+      <>
+        {selectedServices.map((service) => (
+          <input
+            key={`service_${service}`}
+            type="hidden"
+            name="service_type[]"
+            value={service}
+          />
+        ))}
+        {Object.entries(serviceRatings).map(([service, rating]) => (
+          <input
+            key={`rating_${service}`}
+            type="hidden"
+            name={`service_rating_${service}`}
+            value={rating}
+          />
+        ))}
+      </>
+    );
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-900">
@@ -121,6 +191,9 @@ export default function CreateWorker() {
         formCard={true}
       >
         <form action={formAction}>
+          {renderHiddenInputs()}
+          <input type="hidden" name="imageUrl" value={imageUrl || ""} />
+
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-slate-800 mb-6 pb-2 border-b border-blue-100">
               Personal Information
@@ -134,6 +207,8 @@ export default function CreateWorker() {
                   <input
                     type="text"
                     name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
                     placeholder="Full Name"
                     className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
                   />
@@ -151,6 +226,8 @@ export default function CreateWorker() {
                   <input
                     type="email"
                     name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     placeholder="Email Address"
                     className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
                   />
@@ -168,6 +245,8 @@ export default function CreateWorker() {
                   <input
                     type="number"
                     name="age"
+                    value={formData.age}
+                    onChange={handleInputChange}
                     placeholder="Age"
                     className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
                   />
@@ -187,6 +266,8 @@ export default function CreateWorker() {
                   <input
                     type="text"
                     name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
                     placeholder="Phone Number"
                     className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
                   />
@@ -228,7 +309,6 @@ export default function CreateWorker() {
                       />
                     </div>
                   )}
-                  <input type="hidden" name="imageUrl" value={imageUrl || ""} />
                 </div>
               </div>
             </div>
@@ -252,8 +332,7 @@ export default function CreateWorker() {
                   >
                     <input
                       type="checkbox"
-                      name="service_type[]"
-                      value={service.name}
+                      checked={selectedServices.includes(service.name)}
                       className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                       onChange={(e) =>
                         handleServiceChange(service.name, e.target.checked)
@@ -310,6 +389,8 @@ export default function CreateWorker() {
                 </label>
                 <select
                   name="shift"
+                  value={formData.shift}
+                  onChange={handleInputChange}
                   className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition-colors bg-white"
                 >
                   <option value="">Select Shift</option>
@@ -331,6 +412,8 @@ export default function CreateWorker() {
                 <input
                   type="number"
                   name="rating"
+                  value={formData.rating}
+                  onChange={handleInputChange}
                   placeholder="Enter 1-5"
                   min="1"
                   max="5"
